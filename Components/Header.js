@@ -1,18 +1,19 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native';
+import {colors} from '../Constants/colors';
 
 const styles = StyleSheet.create({
     headerContainer: {
       width: '100%',
       height: 100,
-      backgroundColor: '#77966D',
+      backgroundColor: colors.primary,
       alignItems: 'center',
       justifyContent: 'center',
     },
     title:{
-        fontSize: 19,
+        fontSize: 20,
         color: 'white',
-        fontWeight: 'bold',
+        fontFamily: 'Lato-Bold',
         marginTop: 20,
     }
   });

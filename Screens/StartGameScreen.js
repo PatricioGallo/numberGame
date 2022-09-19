@@ -1,17 +1,21 @@
-import React from 'react'
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useState } from 'react'
+import { Button, Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import Card from '../Components/Card';
+import { colors } from '../Constants/colors';
+import Input from '../Components/Input';
+import NumberContainer from '../Components/NumberContainer';
 
 const styles = StyleSheet.create({
     bodyContainer: {
       width: '100%',
-      backgroundColor: '#fff',
+      backgroundColor: colors.backgroundColor,
       alignItems: 'center',
       justifyContent: 'center',
     },
     title:{
-        fontSize: 17,
-        color: 'black',
-        fontWeight: 'bold',
+        fontSize: 19,
+        color: colors.dark,
+        fontFamily: 'Lato-Bold',
         marginTop: 20,
     },
     gameContainer: {
@@ -20,15 +24,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 20,
         padding: 20,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-
-        elevation: 4,
         backgroundColor: "#fff",
     },
     buttonContainer: {
@@ -40,36 +35,96 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     input: {
-        minWidth: '30%',
-        borderBottomWidth: 1,
-        borderBottomColor: '#77966D',
         marginTop: 20,
-        textAlign: 'center',
-        fontSize: 30,
-        paddingBottom: 10,
     },
+    choseNumberTitle: {
+        fontSize: 17,
+        fontFamily: 'Lato-Regular',
+    }
   });
 
 
-const StartGameScreen = () => {
+const StartGameScreen = ({setUserNumber}) => {
+
+    const[value, setValue] = useState("");
+    const[confirmed, setConfirmed] = useState(false);
+    const [selectedNumber, setSelectedNumber] = useState('');
+
+    const handlerInputNumber = (number) => {
+        setValue(number.replace(/[^0-9]/g, ''));
+    };
+
+
+
+    const resetInput = ()=> {
+        setValue(0);
+        setConfirmed(false);
+    };
+
+
+
+    const confirmInput = () => {
+        const choseNumber = Number(value);
+
+        if(choseNumber === NaN || choseNumber <= 0  || choseNumber > 99) {return}
+
+        setConfirmed(true);
+        setSelectedNumber(choseNumber);
+        setValue('');
+        
+    };
+
+
+
+    const confirmedOutput = confirmed ?
+        <Card style={styles.gameContainer}> 
+            <Text style={styles.choseNumberTitle}>Numero elegido {}</Text>
+            <NumberContainer number={selectedNumber} />
+            <Button 
+            title="Empezar Juego"
+            color={colors.primary}
+            onPress={()=>setUserNumber(selectedNumber)}
+            />
+        </Card> 
+    : null;
+
+
+
+
+
   return (
-    <View style={styles.bodyContainer}>
-        <Text style={styles.title}>Comienza el juego</Text>
-        <View style={styles.gameContainer}>
-            <View>
-                <Text>Elija un numero</Text>
-                <TextInput style={styles.input}
-                keyboardType="numeric" 
-                maxLength={2}
-                blurOnSubmit
-                />
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button  color="#77966D" title="Limpiar"/>
-                <Button  color="#77966D" title="Confirmar"/>
-            </View>
+    <TouchableWithoutFeedback onPress={() =>{
+        Keyboard.dismiss();
+    }}>
+        <View style={styles.bodyContainer}>
+            <Text style={styles.title}>Comienza el juego</Text>
+            <Card style={styles.gameContainer}>
+                <View>
+                    <Text style={styles.choseNumberTitle}>Elija un numero</Text>
+                    <Input style={styles.input}
+                        keyboardType="numeric" 
+                        maxLength={2}
+                        blurOnSubmit
+                        value={value}
+                        onChangeText={handlerInputNumber} 
+                        autoCorrect={false}
+                    />
+                </View>
+                <View style={styles.buttonContainer}>
+                    <Button  
+                    color={colors.red} 
+                    title="Limpiar" 
+                    onPress={resetInput}/>
+                    <Button 
+                     color={colors.primary} 
+                     title="Confirmar"
+                     onPress={confirmInput}
+                     />
+                </View>
+            </Card>
+            {confirmedOutput}
         </View>
-    </View>
+    </TouchableWithoutFeedback>
   )
 }
 
