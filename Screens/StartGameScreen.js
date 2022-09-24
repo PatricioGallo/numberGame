@@ -78,7 +78,7 @@ const StartGameScreen = ({setUserNumber}) => {
 
     const confirmedOutput = confirmed ?
         <Card style={styles.gameContainer}> 
-            <Text style={styles.choseNumberTitle}>Numero elegido {}</Text>
+            <Text style={styles.choseNumberTitle}>Numero elegido</Text>
             <NumberContainer number={selectedNumber} />
             <Button 
             title="Empezar Juego"

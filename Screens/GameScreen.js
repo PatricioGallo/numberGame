@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { StyleSheet, View, Text, Button } from 'react-native'
+import React, { useEffect, useState , useRef} from 'react'
+import { StyleSheet, View, Text, Button, Alert } from 'react-native'
 import Card from '../Components/Card';
 import NumberContainer from '../Components/NumberContainer';
 import { colors } from '../Constants/colors';
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 });
 
 
-const GameScreen = ({userNumber}) => {
+const GameScreen = ({userNumber,gameOver}) => {
     
     const generateNumber = (min,max,exclude) => {
         min= Math.ceil(min);
@@ -49,7 +49,38 @@ const GameScreen = ({userNumber}) => {
         }
     };
 
+
     const [currentGuess, setCurrentGuess] = useState(generateNumber(1,99,userNumber));
+    const [round, setRound] = useState(0);
+    const minRef = useRef(1);
+    const maxRef = useRef(99);
+
+    const bottonPress = (current)=>{
+        if(
+            (current === 'lower' && userNumber > currentGuess) || 
+            (current === 'upper' && userNumber < currentGuess) 
+            ){
+                Alert.alert('No mientas!!','Sabes que no es verdad',[{
+                    text:'Continuar', style:'cancel'
+                }]);   
+                return
+            }
+        if(current === 'lower'){
+            maxRef.current = currentGuess; 
+        }else{
+           minRef.current = currentGuess;            
+        }
+        setRound(round+1);
+        setCurrentGuess(generateNumber(minRef.current , maxRef.current , currentGuess));
+    };
+
+    useEffect(()=>{
+
+        if(currentGuess === userNumber){
+             gameOver(round);
+        }
+        
+    },[currentGuess, minRef,maxRef]);
 
   return (
     <View style={styles.gameScreen}>
@@ -60,10 +91,12 @@ const GameScreen = ({userNumber}) => {
                 <Button 
                     title="Menor"
                     color={colors.primary}
+                    onPress={()=> bottonPress('lower')}
                 />
                 <Button 
                     title="Mayor"
                     color={colors.primary}
+                    onPress={()=> bottonPress('upper')}
                 />
             </View>
         </Card>

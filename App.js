@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useFonts } from 'expo-font';
 import { ActivityIndicator } from 'react-native';
 import { colors } from './Constants/colors';
-
+import GameOver from './Screens/GameOver';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,6 +23,7 @@ export default function App() {
     'Lato-Regular' : require('./assets/fonts/Lato-Regular.ttf'),
     'Lato-Bold' : require('./assets/fonts/Lato-Bold.ttf'),
   });
+  const[numberRounds, setNumberRounds] = useState(0);
 
   if(!loaded){
     return (
@@ -31,15 +32,31 @@ export default function App() {
       </View>
     );
   }
+  
+  const gameOver = (rounds) => {
+    setNumberRounds(rounds);
+  };
+
+  const returnGame = () => {
+    setUserNumber(0);
+    setNumberRounds(0);
+  };
+
+
 
   const condition = !userNumber? 
     <StartGameScreen setUserNumber={setUserNumber}/>
   : 
-    <GameScreen userNumber={userNumber}/>
+    numberRounds === 0 ?
+    <GameScreen userNumber={userNumber} gameOver={gameOver}/>
+    :
+    <GameOver userNumber={userNumber} rounds={numberRounds} returnGame={returnGame}/>
+
+
 
   return (
     <View >
-      <Header title={"Adivina el numero"}/>
+      <Header title={numberRounds ? 'Juego terminado' : 'Adivina el numero'}/>
       {condition}
     </View>
   );
